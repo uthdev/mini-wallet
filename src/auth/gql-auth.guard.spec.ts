@@ -20,7 +20,9 @@ describe('GqlAuthGuard', () => {
         getContext: () => ({ req: mockRequest }),
       };
 
-      jest.spyOn(GqlExecutionContext, 'create').mockReturnValue(mockContext as any);
+      jest
+        .spyOn(GqlExecutionContext, 'create')
+        .mockReturnValue(mockContext as any);
 
       const executionContext = {} as ExecutionContext;
       const result = guard.getRequest(executionContext);

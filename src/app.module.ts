@@ -27,17 +27,20 @@ import { TransactionsModule } from './transactions/transactions.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const databaseUrl = process.env.DATABASE_URL;
-        
+
         if (databaseUrl) {
           return {
             type: 'postgres' as const,
             url: databaseUrl,
             autoLoadEntities: true,
             synchronize: config.get<string>('nodeEnv') !== 'production',
-            ssl: config.get<string>('nodeEnv') === 'production' ? { rejectUnauthorized: false } : false,
+            ssl:
+              config.get<string>('nodeEnv') === 'production'
+                ? { rejectUnauthorized: false }
+                : false,
           };
         }
-        
+
         return {
           type: 'postgres' as const,
           host: config.get<string>('database.host'),
@@ -67,7 +70,8 @@ import { TransactionsModule } from './transactions/transactions.module';
     AuthModule,
     UsersModule,
     WalletModule,
-    TransactionsModule],
+    TransactionsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
@@ -8,7 +7,6 @@ import { CreateUserInput } from './dto/create-user.input';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
 
   const mockUser: User = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -35,7 +33,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(() => {
@@ -96,7 +93,9 @@ describe('UsersService', () => {
     it('should find user by id', async () => {
       mockRepository.findOne.mockResolvedValue(mockUser);
 
-      const result = await service.findById('123e4567-e89b-12d3-a456-426614174000');
+      const result = await service.findById(
+        '123e4567-e89b-12d3-a456-426614174000',
+      );
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: '123e4567-e89b-12d3-a456-426614174000' },

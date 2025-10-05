@@ -15,7 +15,9 @@ describe('Mini Wallet E2E', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     await app.init();
 
     const registerRes = await request(app.getHttpServer())
@@ -57,7 +59,7 @@ describe('Mini Wallet E2E', () => {
 
     it('should login existing user', async () => {
       const email = `login${Date.now()}@example.com`;
-      
+
       await request(app.getHttpServer())
         .post('/graphql')
         .send({

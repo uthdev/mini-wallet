@@ -13,9 +13,13 @@ describe('TransactionsResolver', () => {
         {
           provide: TransactionsService,
           useValue: {
-            createAndSend: jest.fn().mockResolvedValue({ id: 't1', status: 'SENT' }),
+            createAndSend: jest
+              .fn()
+              .mockResolvedValue({ id: 't1', status: 'SENT' }),
             listByWallet: jest.fn().mockResolvedValue([{ id: 't1' }]),
-            refreshStatus: jest.fn().mockResolvedValue({ id: 't1', status: 'CONFIRMED' }),
+            refreshStatus: jest
+              .fn()
+              .mockResolvedValue({ id: 't1', status: 'CONFIRMED' }),
           },
         },
       ],
@@ -26,8 +30,16 @@ describe('TransactionsResolver', () => {
   });
 
   it('createTransaction passes walletId, toAddress, amount, and user.id', async () => {
-    await resolver.createTransaction({ walletId: 'w1', toAddress: 'addr', amountBtc: 0.001 }, { id: 'u1' } as any);
-    expect(service.createAndSend).toHaveBeenCalledWith('w1', 'addr', 0.001, 'u1');
+    await resolver.createTransaction(
+      { walletId: 'w1', toAddress: 'addr', amountBtc: 0.001 },
+      { id: 'u1' } as any,
+    );
+    expect(service.createAndSend).toHaveBeenCalledWith(
+      'w1',
+      'addr',
+      0.001,
+      'u1',
+    );
   });
 
   it('walletTransactions passes walletId and user.id', async () => {

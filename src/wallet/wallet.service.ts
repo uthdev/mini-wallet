@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 export class WalletService {
   constructor(
     @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   async createForUser(userId: string): Promise<Wallet> {
@@ -24,8 +24,11 @@ export class WalletService {
         user: { id: userId } as any,
       });
       return await this.walletRepo.save(wallet);
-    } catch (e) {
-      throw new HttpException('Failed to create wallet address', HttpStatus.BAD_GATEWAY);
+    } catch {
+      throw new HttpException(
+        'Failed to create wallet address',
+        HttpStatus.BAD_GATEWAY,
+      );
     }
   }
 
@@ -43,12 +46,12 @@ export class WalletService {
       where: { id: walletId },
       relations: ['user'],
     });
-    if (!wallet) throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
-    if (wallet.user.id !== userId) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    if (!wallet)
+      throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
+    if (wallet.user.id !== userId)
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
-    const { data } = await axios.get(
-      `${base}/addrs/${wallet.address}/balance`,
-    );
+    const { data } = await axios.get(`${base}/addrs/${wallet.address}/balance`);
     const satoshis = Number(data.balance) + Number(data.unconfirmed_balance);
     wallet.balance = satoshis / 1e8;
 

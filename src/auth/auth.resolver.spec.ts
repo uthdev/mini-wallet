@@ -8,7 +8,6 @@ import { User } from '../users/entities/user.entity';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
-  let authService: AuthService;
 
   const mockUser: User = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -41,7 +40,6 @@ describe('AuthResolver', () => {
     }).compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
-    authService = module.get<AuthService>(AuthService);
   });
 
   afterEach(() => {
@@ -85,7 +83,7 @@ describe('AuthResolver', () => {
       const mockAuthResponse: AuthResponse = {
         accessToken: 'jwt-token',
         user: userWithoutPassword,
-      }
+      };
 
       mockAuthService.validateUser.mockResolvedValue(userWithoutPassword);
       mockAuthService.login.mockResolvedValue(mockAuthResponse.accessToken);
@@ -94,7 +92,7 @@ describe('AuthResolver', () => {
 
       expect(mockAuthService.validateUser).toHaveBeenCalledWith(
         input.email,
-        input.password
+        input.password,
       );
       expect(mockAuthService.login).toHaveBeenCalledWith({
         id: userWithoutPassword.id,
@@ -111,7 +109,9 @@ describe('AuthResolver', () => {
 
       mockAuthService.validateUser.mockResolvedValue(null);
 
-      await expect(resolver.login(input)).rejects.toThrow('Invalid credentials');
+      await expect(resolver.login(input)).rejects.toThrow(
+        'Invalid credentials',
+      );
     });
   });
 

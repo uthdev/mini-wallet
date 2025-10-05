@@ -126,6 +126,8 @@ describe('WalletService', () => {
   it('createForUser: throws error when API fails', async () => {
     mockedAxios.post.mockRejectedValue(new Error('API Error'));
 
-    await expect(service.createForUser('u1')).rejects.toThrow('Failed to create wallet address');
+    await expect(service.createForUser('u1')).rejects.toThrow(
+      'Failed to create wallet address',
+    );
   });
 });

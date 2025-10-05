@@ -13,9 +13,13 @@ describe('WalletResolver', () => {
         {
           provide: WalletService,
           useValue: {
-            createForUser: jest.fn().mockResolvedValue({ id: 'w1', address: 'addr' }),
+            createForUser: jest
+              .fn()
+              .mockResolvedValue({ id: 'w1', address: 'addr' }),
             getByUser: jest.fn().mockResolvedValue([{ id: 'w1' }]),
-            refreshBalance: jest.fn().mockResolvedValue({ id: 'w1', balance: 0.1 }),
+            refreshBalance: jest
+              .fn()
+              .mockResolvedValue({ id: 'w1', balance: 0.1 }),
           },
         },
       ],

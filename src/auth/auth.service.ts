@@ -9,14 +9,21 @@ import { AuthResponse } from './entities/auth-response.entity';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(private jwt: JwtService, private users: UsersService) {}
+  constructor(
+    private jwt: JwtService,
+    private users: UsersService,
+  ) {}
 
-  async validateUser(email: string, pass: string): Promise<Omit<User, 'password'> | null> {
+  async validateUser(
+    email: string,
+    pass: string,
+  ): Promise<Omit<User, 'password'> | null> {
     const user = await this.users.findByEmail(email);
     if (!user) return null;
     const match = await bcrypt.compare(pass, user.password);
     if (!match) return null;
-    const { password, ...safe } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...safe } = user;
     return safe;
   }
 
@@ -27,10 +34,15 @@ export class AuthService {
     return token;
   }
 
-  async register(input: { email: string; password: string; name: string }): Promise<AuthResponse> {
+  async register(input: {
+    email: string;
+    password: string;
+    name: string;
+  }): Promise<AuthResponse> {
     const existing = await this.users.findByEmail(input.email);
     if (existing) throw new UnauthorizedException('Email already in use');
-    const { password, ...created } = await this.users.create(input);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...created } = await this.users.create(input);
     const token = await this.login({ id: created.id, email: created.email });
     this.logger.log(`User registered: ${created.email}`);
     return { accessToken: token, user: created };
@@ -38,7 +50,8 @@ export class AuthService {
 
   async getCurrentUser(userId: string): Promise<Omit<User, 'password'>> {
     const user = await this.users.findById(userId);
-    const { password, ...safe } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...safe } = user;
     return safe;
   }
 }

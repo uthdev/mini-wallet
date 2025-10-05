@@ -1,5 +1,17 @@
-import { Field, ObjectType, ID, Float, registerEnumType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Field,
+  ObjectType,
+  ID,
+  Float,
+  registerEnumType,
+} from '@nestjs/graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Wallet } from '../../wallet/entities/wallet.entity';
 
 export enum TransactionStatus {
@@ -34,7 +46,11 @@ export class Transaction {
   txHash?: string;
 
   @Field(() => TransactionStatus)
-  @Column({ type: 'enum', enum: TransactionStatus, default: TransactionStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: TransactionStatus,
+    default: TransactionStatus.PENDING,
+  })
   status: TransactionStatus;
 
   @ManyToOne(() => Wallet, { onDelete: 'SET NULL', nullable: true })

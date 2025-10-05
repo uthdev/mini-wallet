@@ -5,12 +5,9 @@ import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
-import { AuthResponse } from './entities/auth-response.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let jwtService: JwtService;
-  let usersService: UsersService;
 
   const mockUser: User = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -51,8 +48,6 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    jwtService = module.get<JwtService>(JwtService);
-    usersService = module.get<UsersService>(UsersService);
   });
 
   afterEach(() => {
@@ -68,10 +63,18 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
 
-      const result = await service.validateUser('test@example.com', 'password123');
+      const result = await service.validateUser(
+        'test@example.com',
+        'password123',
+      );
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'password123',
+        'hashedPassword',
+      );
       expect(result).toEqual({
         id: mockUser.id,
         email: mockUser.email,
@@ -82,7 +85,10 @@ describe('AuthService', () => {
     it('should return null when user not found', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      const result = await service.validateUser('test@example.com', 'password123');
+      const result = await service.validateUser(
+        'test@example.com',
+        'password123',
+      );
 
       expect(result).toBeNull();
     });
@@ -91,7 +97,10 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
 
-      const result = await service.validateUser('test@example.com', 'wrongpassword');
+      const result = await service.validateUser(
+        'test@example.com',
+        'wrongpassword',
+      );
 
       expect(result).toBeNull();
     });
@@ -101,7 +110,7 @@ describe('AuthService', () => {
     it('should return auth response with token and user', async () => {
       const userPayload = { id: mockUser.id, email: mockUser.email };
       const token = 'jwt-token';
-      
+
       mockJwtService.sign.mockReturnValue(token);
 
       const result = await service.login(userPayload);
@@ -151,7 +160,7 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
 
       await expect(service.register(input)).rejects.toThrow(
-        new UnauthorizedException('Email already in use')
+        new UnauthorizedException('Email already in use'),
       );
     });
   });

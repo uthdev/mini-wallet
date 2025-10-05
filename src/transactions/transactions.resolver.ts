@@ -18,11 +18,11 @@ export class TransactionsResolver {
     @CurrentUser() user: User,
   ) {
     return this.txService.createAndSend(
-      input.walletId, 
-      input.toAddress, 
-      input.amountBtc, 
+      input.walletId,
+      input.toAddress,
+      input.amountBtc,
       user.id,
-    )
+    );
   }
 
   @UseGuards(GqlAuthGuard)
@@ -42,5 +42,4 @@ export class TransactionsResolver {
   ) {
     return this.txService.refreshStatus(txId, user.id);
   }
-
 }

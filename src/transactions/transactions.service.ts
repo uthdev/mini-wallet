@@ -9,13 +9,19 @@ import { Transaction, TransactionStatus } from './entities/transaction.entity';
 @Injectable()
 export class TransactionsService {
   constructor(
-    @InjectRepository(Transaction) private readonly txRepo: Repository<Transaction>,
+    @InjectRepository(Transaction)
+    private readonly txRepo: Repository<Transaction>,
     @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
     private configService: ConfigService,
     private readonly dataSource: DataSource,
   ) {}
 
-  async createAndSend(walletId: string, toAddress: string, amountBtc: number, userId: string): Promise<Transaction> {
+  async createAndSend(
+    walletId: string,
+    toAddress: string,
+    amountBtc: number,
+    userId: string,
+  ): Promise<Transaction> {
     const token = this.configService.get('blockcypher.token');
     const base = this.configService.get('blockcypher.baseUrl');
     return this.dataSource.transaction(async (manager) => {
@@ -23,8 +29,10 @@ export class TransactionsService {
         where: { id: walletId },
         relations: ['user'],
       });
-      if (!wallet) throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
-      if (wallet.user.id !== userId) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      if (!wallet)
+        throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
+      if (wallet.user.id !== userId)
+        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
       const value = Math.round(amountBtc * 1e8);
 
@@ -38,10 +46,10 @@ export class TransactionsService {
       tx = await manager.save(tx);
 
       try {
-        const newTx = await axios.post(
-          `${base}/txs/new?token=${token}`,
-          { inputs: [{ addresses: [wallet.address] }], outputs: [{ addresses: [toAddress], value }] },
-        );
+        const newTx = await axios.post(`${base}/txs/new?token=${token}`, {
+          inputs: [{ addresses: [wallet.address] }],
+          outputs: [{ addresses: [toAddress], value }],
+        });
 
         const sent = await axios.post(
           `${base}/txs/send?token=${token}`,
@@ -51,18 +59,26 @@ export class TransactionsService {
         tx.txHash = sent.data?.tx?.hash ?? sent.data?.hash;
         tx.status = TransactionStatus.SENT;
         return manager.save(tx);
-      } catch (e) {
+      } catch {
         tx.status = TransactionStatus.FAILED;
         await manager.save(tx);
-        throw new HttpException('Failed to send transaction', HttpStatus.BAD_GATEWAY);
+        throw new HttpException(
+          'Failed to send transaction',
+          HttpStatus.BAD_GATEWAY,
+        );
       }
     });
   }
 
   async listByWallet(walletId: string, userId: string): Promise<Transaction[]> {
-    const wallet = await this.walletRepo.findOne({ where: { id: walletId }, relations: ['user'] });
-    if (!wallet) throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
-    if (wallet.user.id !== userId) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const wallet = await this.walletRepo.findOne({
+      where: { id: walletId },
+      relations: ['user'],
+    });
+    if (!wallet)
+      throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
+    if (wallet.user.id !== userId)
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.txRepo.find({
       where: { wallet: { id: walletId } },
@@ -77,11 +93,16 @@ export class TransactionsService {
         where: { id: txId },
         relations: ['wallet', 'wallet.user'],
       });
-      if (!tx) throw new HttpException('Transaction not found', HttpStatus.NOT_FOUND);
-      if (tx.wallet?.user.id !== userId) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      if (!tx)
+        throw new HttpException('Transaction not found', HttpStatus.NOT_FOUND);
+      if (tx.wallet?.user.id !== userId)
+        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
       const { data } = await axios.get(`${base}/txs/${tx.txHash}`);
-      tx.status = Number(data.confirmations) > 0 ? TransactionStatus.CONFIRMED : TransactionStatus.SENT;
+      tx.status =
+        Number(data.confirmations) > 0
+          ? TransactionStatus.CONFIRMED
+          : TransactionStatus.SENT;
 
       return manager.save(tx);
     });

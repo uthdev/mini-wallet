@@ -27,7 +27,7 @@ export class AuthResolver {
 
   @Query(() => User)
   @UseGuards(GqlAuthGuard)
-  async me(@CurrentUser() user: any): Promise<Omit<User, "password">> {
+  async me(@CurrentUser() user: any): Promise<Omit<User, 'password'>> {
     return await this.auth.getCurrentUser(user.userId);
   }
 

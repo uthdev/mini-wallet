@@ -23,7 +23,9 @@ export default () => ({
 
   // BlockCypher
   blockcypher: {
-    baseUrl: process.env.BLOCKCYPHER_BASE_URL ?? 'https://api.blockcypher.com/v1/btc/test3',
+    baseUrl:
+      process.env.BLOCKCYPHER_BASE_URL ??
+      'https://api.blockcypher.com/v1/btc/test3',
     token: process.env.BLOCKCYPHER_TOKEN ?? '',
   },
 
