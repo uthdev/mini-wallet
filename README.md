@@ -1,99 +1,351 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Mini Wallet Application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-grade Bitcoin wallet service built with NestJS, GraphQL, and BlockCypher API integration.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+- **Create Wallet** - Generate Bitcoin testnet wallet addresses
+- **Check Balance** - Fetch real-time wallet balance from blockchain
+- **Send Funds** - Transfer Bitcoin on testnet network
+- **Transaction History** - View and track transaction status
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠 Tech Stack
 
-## Project setup
+- **Backend**: NestJS (Node.js framework)
+- **API**: GraphQL with Apollo Server
+- **Database**: PostgreSQL with TypeORM
+- **Blockchain**: BlockCypher API (Bitcoin Testnet)
+- **Authentication**: JWT with Passport
+- **Testing**: Jest (Unit + E2E tests)
+- **DevOps**: Docker, Docker Compose
 
-```bash
-$ pnpm install
-```
+## 📋 Prerequisites
 
-## Compile and run the project
+- Node.js 20+
+- PostgreSQL 15+
+- pnpm
+- Docker (optional)
+
+## 🔧 Setup Instructions
+
+### Local Development
+
+1. **Clone the repository**
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+git clone https://github.com/uthdev/mini-wallet
+cd mini-wallet
 ```
 
-## Run tests
+2. **Install dependencies**
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3. **Configure environment variables**
 
 ```bash
-$ pnpm install -g mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Edit `.env` with your configuration:
 
-## Resources
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=your_password
+DB_NAME=walletdb
 
-Check out a few resources that may come in handy when working with NestJS:
+# Security
+JWT_SECRET=your_jwt_secret_here
+ENCRYPTION_SECRET=your_encryption_secret_here
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# BlockCypher API
+BLOCKCYPHER_BASE_URL=https://api.blockcypher.com/v1/btc/test3
+BLOCKCYPHER_TOKEN=your_blockcypher_token
 
-## Support
+# App
+PORT=3000
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+4. **Start PostgreSQL** (if not using Docker)
 
-## Stay in touch
+```bash
+# Using Docker
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:15
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+5. **Run the application**
 
-## License
+```bash
+# Development mode
+pnpm run start:dev
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Production mode
+pnpm run build
+pnpm run start:prod
+```
+
+### Docker Setup
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## 🧪 Testing
+
+### Running Tests
+
+```bash
+# Start test database (required for e2e tests)
+docker compose -f docker-compose.test.yml up -d
+
+# Unit tests
+pnpm test
+
+# E2E tests
+pnpm test:e2e
+
+# Test coverage
+pnpm test:cov
+
+# Run all tests
+pnpm test:all
+
+# Stop test database
+docker compose -f docker-compose.test.yml down
+```
+
+## 📚 API Documentation
+
+### GraphQL Playground
+
+Access GraphQL Playground at: `http://localhost:3000/graphql`
+
+### Authentication
+
+All wallet and transaction operations require JWT authentication.
+
+#### Register
+
+```graphql
+mutation {
+  register(input: {
+    email: "user@example.com"
+    password: "Password123"
+    name: "John Doe"
+  }) {
+    accessToken
+    user {
+      id
+      email
+      name
+    }
+  }
+}
+```
+
+#### Login
+
+```graphql
+mutation {
+  login(input: {
+    email: "user@example.com"
+    password: "Password123"
+  }) {
+    accessToken
+    user {
+      id
+      email
+    }
+  }
+}
+```
+
+#### Get Current User
+
+```graphql
+query {
+  me {
+    id
+    email
+    name
+  }
+}
+```
+
+### Wallet Operations
+
+**Note**: Add Authorization header: `Bearer <your_token>`
+
+#### Create Wallet
+
+```graphql
+mutation {
+  createWallet {
+    id
+    address
+    balance
+  }
+}
+```
+
+#### Get My Wallets
+
+```graphql
+query {
+  myWallets {
+    id
+    address
+    balance
+  }
+}
+```
+
+#### Refresh Wallet Balance
+
+```graphql
+mutation {
+  refreshWalletBalance(walletId: "wallet-id-here") {
+    id
+    address
+    balance
+  }
+}
+```
+
+### Transaction Operations
+
+#### Send Funds
+
+```graphql
+mutation {
+  createTransaction(input: {
+    walletId: "wallet-id-here"
+    toAddress: "recipient-address"
+    amountBtc: 0.0001
+  }) {
+    id
+    fromAddress
+    toAddress
+    amount
+    status
+    txHash
+    createdAt
+  }
+}
+```
+
+#### Get Wallet Transactions
+
+```graphql
+query {
+  walletTransactions(walletId: "wallet-id-here") {
+    id
+    fromAddress
+    toAddress
+    amount
+    status
+    txHash
+    createdAt
+  }
+}
+```
+
+#### Refresh Transaction Status
+
+```graphql
+mutation {
+  refreshTransactionStatus(txId: "transaction-id-here") {
+    id
+    status
+    txHash
+  }
+}
+```
+
+## 🏗 Architecture & Design Decisions
+
+### Architecture Overview
+
+```
+src/
+├── auth/           # JWT authentication & authorization
+├── users/          # User management
+├── wallet/         # Wallet operations
+├── transactions/   # Transaction management
+└── config/         # Configuration & validation
+```
+
+### Key Design Decisions
+
+1. **NestJS Framework**: Chosen for its modular architecture, built-in dependency injection, and TypeScript support
+2. **GraphQL**: Provides flexible API queries and strong typing
+3. **PostgreSQL**: Reliable relational database for transactional data
+4. **BlockCypher API**: Free tier with testnet support, no private key management needed
+5. **JWT Authentication**: Stateless authentication for scalability
+6. **TypeORM**: Type-safe database operations with migrations support
+
+### Security Measures
+
+- Environment variables for sensitive data
+- Password hashing with bcrypt
+- JWT token-based authentication
+- Input validation with class-validator
+- Auth guards on protected endpoints
+- CORS configuration
+- No private key storage (BlockCypher manages keys)
+
+## 🚀 Deployment
+
+### Environment Setup
+
+1. Set up PostgreSQL database
+2. Configure environment variables)
+4. Deploy application
+
+### Deployment Platforms
+
+- **Render**: Connect GitHub repo
+
+## 📊 Test Coverage
+
+Current test coverage: **>70%**
+
+- Unit tests for all services and resolvers
+- E2E tests for authentication and API endpoints
+- Mocked external API calls in unit tests
+
+## 🔐 Security Best Practices
+
+- ✅ Environment variables for secrets
+- ✅ JWT authentication
+- ✅ Password hashing
+- ✅ Input validation
+- ✅ SQL injection prevention (TypeORM)
+- ✅ CORS configuration
+- ✅ Rate limiting ready
+
+## 📝 License
+
+MIT
+
+## 👤 Author
+
+Your Name - [GitHub](https://github.com/uthdev)
+
+## 🙏 Acknowledgments
+
+- NestJS Framework
+- BlockCypher API
+- Bitcoin Testnet

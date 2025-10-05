@@ -43,7 +43,7 @@ describe('JwtStrategy', () => {
       const result = await strategy.validate(payload);
 
       expect(result).toEqual({
-        userId: payload.sub,
+        id: payload.sub,
         email: payload.email,
       });
     });

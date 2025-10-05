@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { GqlAuthGuard } from './gql-auth.gaurd';
+import { GqlAuthGuard } from './gql-auth.guard';
 
 describe('GqlAuthGuard', () => {
   let guard: GqlAuthGuard;
