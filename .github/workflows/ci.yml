@@ -26,32 +26,41 @@ jobs:
           --health-retries=5
 
     env:
-      # Match your .env.test keys
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASS: postgres
       DB_NAME: walletdb_test
+      JWT_SECRET: test-secret-key-for-ci
+      ENCRYPTION_SECRET: test-encryption-key-for-ci
       BLOCKCYPHER_TOKEN: ${{ secrets.BLOCKCYPHER_TOKEN }}
+      BLOCKCYPHER_BASE_URL: https://api.blockcypher.com/v1/btc/test3
+      FRONTEND_URL: http://localhost:3000
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run unit tests
-        run: npm run test -- --ci --runInBand
+        run: pnpm run test -- --ci --runInBand
 
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: pnpm run test:e2e
