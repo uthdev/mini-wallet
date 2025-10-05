@@ -35,8 +35,10 @@ describe('Mini Wallet E2E', () => {
   });
 
   afterAll(async () => {
-    await app.close();
-  });
+    if (app) {
+      await app.close();
+    }
+  }, 30000);
 
   describe('Auth', () => {
     it('should register a new user', async () => {
