@@ -92,14 +92,17 @@ pnpm run start:prod
 ### Docker Setup
 
 ```bash
-# Start all services
-docker-compose up -d
+# Local development
+docker compose -f docker-compose.local.yml up -d
+
+# Production (uses environment variables)
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 ```
 
 ## 🧪 Testing

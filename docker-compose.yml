@@ -1,31 +1,35 @@
 version: '3.8'
 
 services:
-  api:
+  app:
     build:
       context: .
-      target: production
-    container_name: mini-wallet-api
+      dockerfile: Dockerfile
     ports:
-      - '3000:3000'
-    env_file:
-      - .env.production
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - BLOCKCYPHER_TOKEN=${BLOCKCYPHER_TOKEN}
+      - BLOCKCYPHER_BASE_URL=${BLOCKCYPHER_BASE_URL:-https://api.blockcypher.com/v1/btc/test3}
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
-      - db
+      - postgres
     restart: unless-stopped
 
-  db:
-    image: postgres:15
-    container_name: mini-wallet-db
+  postgres:
+    image: postgres:15-alpine
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-postgres}
+      - POSTGRES_DB=${DB_NAME:-walletdb}
     ports:
-      - '5432:5432'
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:
-  pgdata:
+  postgres_data:

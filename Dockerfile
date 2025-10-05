@@ -28,9 +28,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy compiled output and env
+# Copy compiled output
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env ./
 
 EXPOSE 3000
 CMD ["node", "dist/main"]
