@@ -5,7 +5,7 @@ import { RegisterInput } from './dto/register.input';
 import { LoginInput } from './dto/login.input';
 import { AuthResponse } from './entities/auth-response.entity';
 import { User } from '../users/entities/user.entity';
-import { GqlAuthGuard } from './gql-auth.gaurd';
+import { GqlAuthGuard } from './gql-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 
 @Resolver()
