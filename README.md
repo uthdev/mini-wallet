@@ -2,6 +2,12 @@
 
 A production-grade Bitcoin wallet service built with NestJS, GraphQL, and BlockCypher API integration.
 
+## 🌐 Live Demo
+
+**Deployed Application**: https://mini-wallet-production.up.railway.app
+
+**GraphQL Playground**: https://mini-wallet-production.up.railway.app/graphql
+
 ## 🚀 Features
 
 - **Create Wallet** - Generate Bitcoin testnet wallet addresses
