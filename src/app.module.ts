@@ -54,11 +54,12 @@ import { TransactionsModule } from './transactions/transactions.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      introspection: true,
       playground: false,
       plugins: [
         ApolloServerPluginInlineTrace(),
         ApolloServerPluginLandingPageLocalDefault({
-          embed: true, // Embed Apollo Explorer locally
+          embed: true,
         }),
       ],
       context: ({ req }) => ({ req }),
