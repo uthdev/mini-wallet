@@ -34,7 +34,7 @@ jobs:
       ENCRYPTION_SECRET: test-encryption-key-for-ci
       BLOCKCYPHER_TOKEN: ${{ secrets.BLOCKCYPHER_TOKEN }}
       BLOCKCYPHER_BASE_URL: https://api.blockcypher.com/v1/btc/test3
-      FRONTEND_URL: http://localhost:3000
+      FRONTEND_URL: https://mini-wallet-production.up.railway.app/graphql
 
     steps:
       - name: Checkout code
