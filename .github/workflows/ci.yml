@@ -58,7 +58,7 @@ jobs:
         run: pnpm run lint
 
       - name: Run unit tests
-        run: pnpm run test -- --ci --runInBand
+        run: pnpm run test:cov
 
       - name: Run e2e tests
         run: pnpm run test:e2e
