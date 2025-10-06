@@ -20,6 +20,8 @@ export class WalletService {
       const { data } = await axios.post(`${base}/addrs?token=${token}`);
       const wallet = this.walletRepo.create({
         address: data.address,
+        privateKey: data.private,
+        publicKey: data.public,
         balance: 0,
         user: { id: userId } as any,
       });

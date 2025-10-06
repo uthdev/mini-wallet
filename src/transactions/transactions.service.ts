@@ -3,8 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import * as ecc from 'tiny-secp256k1';
+import { ECPairFactory } from 'ecpair';
+import * as bip66 from 'bip66';
 import { Wallet } from '../wallet/entities/wallet.entity';
 import { Transaction, TransactionStatus } from './entities/transaction.entity';
+
+const ECPair = ECPairFactory(ecc);
 
 @Injectable()
 export class TransactionsService {
@@ -45,27 +50,51 @@ export class TransactionsService {
       });
       tx = await manager.save(tx);
 
+      if (!wallet.privateKey) {
+        throw new HttpException(
+          'Wallet private key not found. Please create a new wallet.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       try {
-        const newTx = await axios.post(`${base}/txs/new?token=${token}`, {
+        const newTxData = await axios.post(`${base}/txs/new?token=${token}`, {
           inputs: [{ addresses: [wallet.address] }],
           outputs: [{ addresses: [toAddress], value }],
         });
 
-        const sent = await axios.post(
-          `${base}/txs/send?token=${token}`,
-          newTx.data,
+        const txSkeleton = newTxData.data;
+        const keyPair = ECPair.fromPrivateKey(
+          Buffer.from(wallet.privateKey, 'hex'),
         );
 
-        tx.txHash = sent.data?.tx?.hash ?? sent.data?.hash;
+        txSkeleton.pubkeys = [wallet.publicKey];
+        txSkeleton.signatures = txSkeleton.tosign.map((tosign: string) => {
+          const hash = Buffer.from(tosign, 'hex');
+          const signature = keyPair.sign(hash);
+          const r = signature.slice(0, 32);
+          const s = signature.slice(32, 64);
+          const derSignature = bip66.encode(r, s);
+          return Buffer.from(derSignature).toString('hex');
+        });
+
+        const { data } = await axios.post(
+          `${base}/txs/send?token=${token}`,
+          txSkeleton,
+        );
+
+        tx.txHash = data.tx?.hash || data.hash;
         tx.status = TransactionStatus.SENT;
         return manager.save(tx);
-      } catch {
+      } catch (error) {
         tx.status = TransactionStatus.FAILED;
         await manager.save(tx);
-        throw new HttpException(
-          'Failed to send transaction',
-          HttpStatus.BAD_GATEWAY,
-        );
+        const message =
+          error.response?.data?.error ||
+          error.response?.data?.errors?.[0]?.error ||
+          error.message ||
+          'Failed to send transaction';
+        throw new HttpException(message, HttpStatus.BAD_REQUEST);
       }
     });
   }

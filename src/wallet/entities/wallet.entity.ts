@@ -20,6 +20,12 @@ export class Wallet {
   @Column()
   address: string;
 
+  @Column({ nullable: true })
+  privateKey?: string;
+
+  @Column({ nullable: true })
+  publicKey?: string;
+
   @Field(() => Float)
   @Column({ type: 'decimal', precision: 18, scale: 8, default: 0 })
   balance: number;

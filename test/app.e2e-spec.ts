@@ -1,5 +1,8 @@
 process.env.NODE_ENV = 'test';
 
+import { config } from 'dotenv';
+config({ path: '.env.test' });
+
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';

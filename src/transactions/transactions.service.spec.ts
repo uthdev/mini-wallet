@@ -63,7 +63,15 @@ describe('TransactionsService', () => {
   });
 
   it('createAndSend: creates tx and marks as SENT when API succeeds', async () => {
-    const wallet = { id: 'w1', address: 'fromAddr', user: { id: 'u1' } } as any;
+    const wallet = {
+      id: 'w1',
+      address: 'fromAddr',
+      privateKey:
+        '0000000000000000000000000000000000000000000000000000000000000001',
+      publicKey:
+        '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+      user: { id: 'u1' },
+    } as any;
 
     (dataSource.transaction as jest.Mock).mockImplementation(async (fn) => {
       const manager = {
@@ -78,7 +86,14 @@ describe('TransactionsService', () => {
     });
 
     mockedAxios.post
-      .mockResolvedValueOnce({ data: {} } as AxiosResponse) // /txs/new
+      .mockResolvedValueOnce({
+        data: {
+          tx: { hash: 'hash' },
+          tosign: [
+            '0000000000000000000000000000000000000000000000000000000000000001',
+          ],
+        },
+      } as AxiosResponse) // /txs/new
       .mockResolvedValueOnce({
         data: { tx: { hash: 'hash' } },
       } as AxiosResponse); // /txs/send
@@ -145,7 +160,15 @@ describe('TransactionsService', () => {
   });
 
   it('createAndSend: marks tx as FAILED when API fails', async () => {
-    const wallet = { id: 'w1', address: 'fromAddr', user: { id: 'u1' } } as any;
+    const wallet = {
+      id: 'w1',
+      address: 'fromAddr',
+      privateKey:
+        '0000000000000000000000000000000000000000000000000000000000000001',
+      publicKey:
+        '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+      user: { id: 'u1' },
+    } as any;
     const saveMock = jest
       .fn()
       .mockResolvedValue({ id: 't1', status: 'FAILED' });
@@ -159,11 +182,13 @@ describe('TransactionsService', () => {
       return fn(manager);
     });
 
-    mockedAxios.post.mockRejectedValue(new Error('API Error'));
+    mockedAxios.post.mockRejectedValue({
+      response: { data: { error: 'API Error' } },
+    });
 
     await expect(
       service.createAndSend('w1', 'toAddr', 0.001, 'u1'),
-    ).rejects.toThrow('Failed to send transaction');
+    ).rejects.toThrow('API Error');
     expect(saveMock).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'FAILED' }),
     );
